@@ -23,6 +23,5 @@ This repository contains sample script to take Inventory information from a Rack
 
 
 
-### Detailed Instructions
-----------------------------
-    * Migrating RackMonkey data to Device42 :  http://blog.device42.com/2014/03/migrating-rackmonkey-data-to-device42/
+*Detailed Instructions:*
+[Migrating RackMonkey data to Device42](http://blog.device42.com/2014/03/migrating-rackmonkey-data-to-device42/)
