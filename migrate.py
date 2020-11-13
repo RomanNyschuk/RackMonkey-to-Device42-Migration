@@ -24,13 +24,13 @@ from requests.auth import HTTPBasicAuth
 import pymysql as sql
 
 
-D42_API_URL = 'https://10.42.104.40'           # make sure to NOT to end in /
-D42_USERNAME = 'admin'
-D42_PASSWORD = 'adm!nd42'
+D42_API_URL = 'https://D42_IP_or_FQDN'           # make sure to NOT to end in /
+D42_USERNAME = 'D42USER'
+D42_PASSWORD = 'D42PASS'
 
 host = 'localhost'    # Hostname for RackMonkey DB. This and values below should be available in Rackmonkey config file
-user = 'root'   # Username to connect to DB
-passwd = 'Durkfjrj_0414'           # Password to connect to DB
+user = 'rackmonkey'   # Username to connect to DB
+passwd = ''           # Password to connect to DB
 dbname = 'rackmonkey' # DB Name
 
 DEBUG = False
