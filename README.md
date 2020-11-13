@@ -10,8 +10,8 @@ This repository contains sample script to take Inventory information from a Rack
 
 ### Requirements
 -----------------------------
-    * python 2.7.x
-    * MySQLdb (which you can install with sudo pip install MySQL-python
+    * python 3.6 and above
+    * pymysql (you can install it with pip install pymysql)
 
 ### Usage
 -----------------------------

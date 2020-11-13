@@ -16,22 +16,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 # Required MySQLdb to be installed. Refer to README for further instructions
 #############################################################################################################
 
-import urllib2
-import urllib
-from base64 import b64encode
 import json
 import csv
+import requests
+from requests.auth import HTTPBasicAuth
 
-import MySQLdb
+import pymysql as sql
 
 
-D42_API_URL = 'https://D42_IP_or_FQDN'           # make sure to NOT to end in /
-D42_USERNAME = 'D42USER'
-D42_PASSWORD = 'D42PASS'
+D42_API_URL = 'https://10.42.104.40'           # make sure to NOT to end in /
+D42_USERNAME = 'admin'
+D42_PASSWORD = 'adm!nd42'
 
 host = 'localhost'    # Hostname for RackMonkey DB. This and values below should be available in Rackmonkey config file
-user = 'rackmonkey'   # Username to connect to DB
-passwd = ''           # Password to connect to DB
+user = 'root'   # Username to connect to DB
+passwd = 'Durkfjrj_0414'           # Password to connect to DB
 dbname = 'rackmonkey' # DB Name
 
 DEBUG = False
@@ -43,36 +42,36 @@ APPEND_DOMAIN_NAME_TO_DEVICE_NAME = False
 ADD_ROLE_AS_CUSTOM_KEY = True
 CSV_ERRORS_FILE_NAME = 'rmerrors.csv'
 
-db=MySQLdb.connect(host,user,passwd,dbname)
+db = sql.connect(host=host, port=3306, db=dbname,
+                 user=user, password=passwd)
 
 
 def post(params, what, API_METHOD='post'):
     if what == 'device': THE_URL = D42_API_URL + '/api/device/'
     elif what == 'ip': THE_URL = D42_API_URL + '/api/ip/'
     else: THE_URL = D42_API_URL + '/api/1.0/' + what + '/'
-    data= urllib.urlencode(params)
+
+    auth = HTTPBasicAuth(D42_USERNAME, D42_PASSWORD)
     headers = {
-            'Authorization' : 'Basic '+ b64encode(D42_USERNAME + ':' + D42_PASSWORD),
-            'Content-Type' : 'application/x-www-form-urlencoded'
-        }
-    req = urllib2.Request(THE_URL, data, headers)
-    if API_METHOD == 'put': req.get_method = lambda: 'PUT'
-    if DEBUG: print '---REQUEST---',req.get_full_url()
-    if DEBUG: print req.headers
-    if DEBUG: print req.data
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    if DEBUG: print('---REQUEST---',THE_URL)
+    if DEBUG: print(headers)
+    if DEBUG: print(params)
     try:
-        r = urllib2.urlopen(req)
-        if r.getcode() == 200:
-            obj = r.read()
-            msg = json.loads(obj)
+        if API_METHOD == 'put':
+            r = requests.put(THE_URL, data=params, headers=headers, auth=auth, verify=False)
+        else:
+            r = requests.post(THE_URL, data=params, headers=headers, auth=auth, verify=False)
+
+        if r.status_code == 200:
+            msg = json.loads(str(r.text))
             return True, msg
         else:
-            return False, r.getcode()
-    except urllib2.HTTPError, e:
-        error_response = e.read()
-        if DEBUG: print e.code, error_response
-        return False, error_response
-    except Exception,e:
+            return False, r.status_code
+    except Exception as e:
+        if DEBUG: print(str(e))
         return False, str(e)
 
 def get_table_data(table):
@@ -218,5 +217,6 @@ def export():
                         if not roladded: f.writerow(['add custom key role failed', roleargs, rolemsg])
                 else: f.writerow(['add device failed', row, msg])
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     export()
